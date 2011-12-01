@@ -1,0 +1,164 @@
+<?php
+function bkthn_install(){
+
+	$sql ="CREATE TABLE IF NOT EXISTS `bkthn` ( ";
+	$sql.="  `key` bigint(20) NOT NULL auto_increment, ";
+	$sql.="  `name` varchar(32) NOT NULL, ";
+	$sql.="  `description` varchar(128) default NULL, ";
+	$sql.="  `bkthn_bikes_key` bigint(20) NOT NULL COMMENT 'Foreign Key', ";
+	$sql.="  `bkthn_types_key` bigint(20) NOT NULL COMMENT 'Foreign Key', ";
+	$sql.="  `user_key` bigint(20) NOT NULL, ";
+	$sql.="  PRIMARY KEY  (`key`) ";
+	$sql.=") ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ";
+	db_query($sql);
+	
+	$sql ="CREATE TABLE IF NOT EXISTS `bkthn_pledges` ( ";
+	$sql.="  `key` bigint(20) NOT NULL auto_increment, ";
+	$sql.="  `period_key` bigint(20) NOT NULL, ";
+	$sql.="  `user_key` bigint(20) NOT NULL, ";
+	$sql.="  `distance` double default 0.0, ";
+	$sql.="  `pledge_per_mile` double default 0.0, ";
+	$sql.="  PRIMARY KEY  (`key`) ";
+	$sql.=") ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ";
+	db_query($sql);	  
+	
+	$sql ="CREATE TABLE IF NOT EXISTS `bkthn_sponsorships` ( ";
+	$sql.="  `key` bigint(20) NOT NULL auto_increment, ";
+	$sql.="  `period_key` bigint(20) NOT NULL COMMENT 'Foreign Key', ";
+	$sql.="  `rider_key` bigint(20) NOT NULL COMMENT 'Foreign Key for user_key of rider', ";
+	$sql.="  `sponsor_key` bigint(20) NOT NULL COMMENT 'Foreign Key for user_key of sponsor', ";
+	$sql.="  `pledge_per_mile` double default 0.0, ";
+	$sql.="  PRIMARY KEY  (`key`) ";
+	$sql.=") ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ";
+	db_query($sql);	  
+	
+	$sql ="CREATE TABLE IF NOT EXISTS `bkthn_periods` ( ";
+	$sql.="  `key` bigint(20) NOT NULL auto_increment, ";
+	$sql.="  `month` varchar(20) NOT NULL, ";
+	$sql.="  `month_abbrev` varchar(3) NOT NULL, ";
+	$sql.="  `year` int(11) NOT NULL, ";
+	$sql.="  `start_date` date NOT NULL, ";
+	$sql.="  `end_date` date NOT NULL, ";
+	$sql.="  PRIMARY KEY  (`key`) ";
+	$sql.=") ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ";
+	db_query($sql);	  
+	
+	$sql ="INSERT INTO `bkthn_periods` (`key`, `month`, `month_abbrev`, `year`,";
+	$sql.=" `start_date`, `end_date`) VALUES ";
+	$sql.="(1, 'January', 'Jan', 2010, '2010-01-01', '2010-01-31'), ";
+	$sql.="(2, 'February', 'Feb', 2010, '2010-02-01', '2010-02-28'), ";
+	$sql.="(3, 'March', 'Mar', 2010, '2010-03-01', '2010-03-31'), ";
+	$sql.="(4, 'April', 'Apr', 2010, '2010-04-01', '2010-04-30'), ";
+	$sql.="(5, 'May', 'May', 2010, '2010-05-01', '2010-05-31'), ";
+	$sql.="(6, 'June', 'Jun', 2010, '2010-06-01', '2010-06-30') ";
+	db_query($sql);
+	
+	$sql ="CREATE TABLE IF NOT EXISTS `bkthn_entries` ( ";
+	$sql.="  `key` bigint(20) NOT NULL auto_increment, ";
+	$sql.="  `name` varchar(32) NOT NULL, ";
+	$sql.="  `description` varchar(128) default NULL, ";
+	$sql.="  `start_date` date NOT NULL, ";
+	$sql.="  `start_time` time default NULL, ";
+	$sql.="  `end_date` date NOT NULL, ";
+	$sql.="  `end_time` time default NULL, ";
+	$sql.="  `est_miles` double NOT NULL, ";
+	$sql.="  `est_time` time NOT NULL, ";
+	$sql.="  `bkthn_key` bigint(20) NOT NULL COMMENT 'Foreign Key', ";
+	$sql.="  `bike_key` bigint(20) NOT NULL COMMENT 'Foreign Key', ";
+	$sql.="  `user_key` bigint(20) NOT NULL COMMENT 'Foreign Key', ";
+	$sql.="  PRIMARY KEY  (`key`) ";
+	$sql.=") ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=18 ";
+	db_query($sql); 
+	
+	$sql ="CREATE TABLE IF NOT EXISTS `bkthn_groups` ( "; 
+	$sql.="  `key` bigint(20) NOT NULL auto_increment, "; 
+	$sql.="  `name` varchar(64) NOT NULL, "; 
+	$sql.="  `description` varchar(128) default NULL, "; 
+	$sql.="  PRIMARY KEY  (`key`) "; 
+	$sql.=") ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ";
+	db_query($sql); 
+	
+	$sql ="CREATE TABLE IF NOT EXISTS `bkthn_group_map` ( ";
+	$sql.="  `key` bigint(20) NOT NULL auto_increment, ";
+	$sql.="  `user_key` bigint(20) NOT NULL COMMENT 'Drupal User ID', ";
+	$sql.="  `bkthn_groups_key` bigint(20) NOT NULL, ";
+	$sql.="  PRIMARY KEY  (`key`) ";
+	$sql.=") ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ";
+	db_query($sql);
+	
+	$sql ="CREATE TABLE IF NOT EXISTS `bkthn_types` ( "; 
+	$sql.="  `key` bigint(20) NOT NULL auto_increment, ";
+	$sql.="  `name` varchar(32) NOT NULL, ";
+	$sql.="  `description` varchar(128) default NULL, ";
+	$sql.="  `user_key` bigint(20) NOT NULL, ";
+	$sql.="  `default_flag` int(11) NOT NULL default '0', ";
+	$sql.="  PRIMARY KEY  (`key`) ";
+	$sql.=") ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ";
+	db_query($sql); 
+	
+	$sql ="INSERT INTO `bkthn_types` (`key`, `name`, `description`, `user_key`, `default_flag`) VALUES ";
+	$sql.="(1, 'Cyclist', 'Default Cycling Log', 0, 1), ";
+	$sql.="(2, 'Commuter Log', 'Default Commuter Log (car, truck, motorcycle)', 0, 1) ";
+	db_query($sql); 
+	
+	$sql ="CREATE TABLE IF NOT EXISTS `bkthn_bikes` ( ";
+	$sql.="  `key` bigint(20) NOT NULL auto_increment, ";
+	$sql.="  `brand` varchar(32) default NULL, ";
+	$sql.="  `model` varchar(32) default NULL, ";
+	$sql.="  `year` int(11) default NULL, ";
+	$sql.="  `est_mpg_city` int(11) default NULL, ";
+	$sql.="  `est_mpg_hwy` int(11) default NULL, ";
+	$sql.="  `primary_flag` int(11) default NULL COMMENT 'Primary mode of transportation', ";
+	$sql.="  `name` varchar(32) NOT NULL, ";
+	$sql.="  `bkthn_vehicle_types_key` int(11) NOT NULL, ";
+	$sql.="  `user_key` bigint(20) NOT NULL, ";
+	$sql.="  PRIMARY KEY  (`key`) ";
+	$sql.=") ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1  ";
+	db_query($sql);
+	
+	$sql ="INSERT INTO `bkthn_bikes` (`key`, `name`, `brand`, `model`, `year`) VALUES ";
+	$sql.="(1, 'Commuter', 'unknown', 'unknown', 1981) ";
+	db_query($sql); 
+	
+	$sql ="DROP TABLE IF EXISTS `bkthn_vehicle_types` ";
+    db_query($sql);
+	  	 
+	$sql ="CREATE TABLE IF NOT EXISTS `bkthn_vehicle_types` ( ";
+	$sql.="  `key` bigint(20) NOT NULL auto_increment, ";
+	$sql.="  `name` varchar(32) NOT NULL, ";
+	$sql.="  `description` varchar(128) default NULL, ";
+	$sql.="  PRIMARY KEY  (`key`) ";
+	$sql.=") ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1  ";
+	db_query($sql); 
+	
+	$sql ="INSERT INTO `bkthn_vehicle_types` (`key`, `name`, `description`) VALUES ";
+	$sql.="(1, 'Bicycle', 'Bicycle'), ";
+	$sql.="(2, 'Car', 'Car'), ";
+	$sql.="(3, 'Truck', 'Truck'), ";
+	$sql.="(4, 'Motorcycle', 'Motorcycle') ";
+	db_query($sql);
+	 
+} //function bkthn_uninstall 
+
+function bkthn_uninstall(){
+  $sql ="DROP TABLE IF EXISTS `bkthn` ";
+  db_query($sql);
+  $sql ="DROP TABLE IF EXISTS `bkthn_groups` ";
+  db_query($sql);
+  $sql ="DROP TABLE IF EXISTS `bkthn_group_map` ";
+  db_query($sql);
+  $sql ="DROP TABLE IF EXISTS `bkthn_entries` ";
+  db_query($sql);
+  $sql ="DROP TABLE IF EXISTS `bkthn_types` ";
+  db_query($sql);
+  $sql ="DROP TABLE IF EXISTS `bkthn_pledges` ";
+  db_query($sql);
+  $sql ="DROP TABLE IF EXISTS `bkthn_bikes` ";
+  db_query($sql);
+  $sql ="DROP TABLE IF EXISTS `bkthn_vehicle_types` ";
+  db_query($sql);
+  $sql ="DROP TABLE IF EXISTS `bkthn_periods` ";
+  db_query($sql);
+
+} //function bkthn_uninstall 
+?>

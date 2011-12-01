@@ -1,0 +1,15 @@
+Index: dhtml_menu.module
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/dhtml_menu/dhtml_menu.module,v
+retrieving revision 1.29.2.19
+diff -u -p -r1.29.2.19 dhtml_menu.module
+--- dhtml_menu.module	5 Jun 2009 00:09:25 -0000	1.29.2.19
++++ dhtml_menu.module	6 Jun 2009 18:45:25 -0000
+@@ -115,6 +120,7 @@ function dhtml_menu_theme_menu_item($lin
+   if ($has_children && !$menu) {
+     // Load the tree below the current position.
+     $tree = _dhtml_menu_subtree($item);
++    if (!is_array($tree)) $tree = array();
+ 
+     // Render it...
+     $menu = menu_tree_output($tree);

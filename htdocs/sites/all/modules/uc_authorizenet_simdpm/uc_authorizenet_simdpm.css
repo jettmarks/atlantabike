@@ -1,0 +1,43 @@
+/**
+ * CSS rules added for SIM/DPM form on the cart/checkout/review page.
+ */
+
+.order-review-table .review-button-row {
+  background-color: inherit !important;
+  text-align: center !important;
+}
+
+#uc-cart-checkout-review-form,
+.order-review-table .review-button-row > td > table > tbody > tr > td {
+  display: none;
+}
+
+.order-review-table .review-button-row > td > table > tbody > tr > td + td {
+  width: 100%;
+  display: inline;
+}
+
+#uc-authorizenet-simdpm-policy-text {
+  padding: 5px;
+}
+
+.uc-authorizenet-simdpm-pane-header {
+  padding: 5px;
+}
+
+#uc-authorizenet-simdpm-test-text {
+  padding-top: 5px;
+  color: red;
+}
+
+#uc-authorizenet-simdpm-submit-button,
+#uc-authorizenet-simdpm-back-link {
+  padding-top: 10px;
+}
+
+#uc-authorizenet-simdpm-form {
+  display: inline;
+  padding: 1em 0 0 0;
+  margin: 0;
+  width: 100%;
+}

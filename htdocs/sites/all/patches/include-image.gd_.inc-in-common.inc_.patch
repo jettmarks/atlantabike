@@ -1,0 +1,12 @@
+Index: includes/common.inc
+===================================================================
+--- includes/common.inc	(revision 4965)
++++ includes/common.inc	(working copy)
+@@ -2548,6 +2548,7 @@
+   require_once './includes/file.inc';
+   require_once './includes/unicode.inc';
+   require_once './includes/image.inc';
++  require_once './includes/image.gd.inc';
+   require_once './includes/form.inc';
+   require_once './includes/mail.inc';
+   require_once './includes/actions.inc';

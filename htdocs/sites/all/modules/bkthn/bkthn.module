@@ -1,0 +1,374 @@
+<?php
+require_once drupal_get_path('module', 'bkthn') . '/bkthn.inc.php';
+require_once drupal_get_path('module', 'bkthn') . '/bkthn.logs.inc.php';
+require_once drupal_get_path('module', 'bkthn') . '/bkthn.bikes.inc.php';
+require_once drupal_get_path('module', 'bkthn') . '/bkthn.pledges.inc.php';
+require_once drupal_get_path('module', 'bkthn') . '/bkthn.sponsors.inc.php';
+
+/**
+* hook_help
+* Display help and module information
+* @param path which path of the site we're displaying help
+* @param arg array that holds the current path as would be returned from
+*   arg() function
+* @return help text for the path
+*/
+
+function bkthn_help($path, $arg)
+{
+  $output = '';
+  switch ($path)
+  {
+    case "admin/help#bkthn" :
+      $output = '<p>' . t("Contact ") . l("Atlanta Bike Geeks",
+          "http://groups.google.com/group/atlanta-bike-geeks?hl=en") .
+      "regarding any questions about this application." . '</p>';
+      $output .= "<image src='bkthn/images/bikeGeek.anim.gif'/>";
+      break;
+  }
+  return $output;
+} // function bkthn_help
+
+/**
+* Set the types of permissions for this module
+*/
+function bkthn_perm()
+{
+  return array (
+    'access own bkthn content',
+    'edit own bkthn content',
+    'access bkthn content',
+    'administer bkthn'
+  );
+} // function onthisdate_perm
+
+/**
+* Display module administration settings
+* @return adminstration form
+*/
+function bkthn_admin()
+{
+  global $form;
+  return system_settings_form($form);
+}
+
+/**
+* hook_block
+* Generate HTML for the block
+* @param op the operation from the URL
+* @param delta offset
+* @returns block HTML
+*/
+function bkthn_block($op = 'list', $delta = 0)
+{
+  // listing of blocks, such as on the admin/block page
+  if ($op == "list")
+  {
+    $block[0]["info"] = t('Bike Commute-a-Thon');
+    $block[1]["info"] = t('Bike Commute-a-Thon Summary');
+    return $block;
+  } else
+    if ($op == 'view')
+    {
+      switch($delta)
+      {
+      case 1:
+	      $block_content = "Make pledges, challenge fellow bike commuters, log your miles.  Summary Goes Here.";
+	      // set up the block
+	      $block['subject'] = 'Bike Commute-a-Thon';
+//	      $block['content'] = $block_content;
+	      $block['content'] = _print_summary();
+	      return $block;
+      }
+    }
+} // end function bkthn_hook
+
+/**
+* hook_menu
+* Implement the menus hook
+* @returns array of menu items
+*/
+function bkthn_menu()
+{
+  $items = array ();
+
+  $items['bkthn'] = array (
+    'title' => t('Bike Commute-a-Thon'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_form',
+      'main',
+      'null'
+    ),
+    'access arguments' => array (
+      'access own bkthn content'
+    ),
+    'type' => MENU_NORMAL_ITEM,
+
+  );
+
+  $items['bkthn/progress'] = array (
+    'title' => t('Progress'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_form',
+      'main',
+      'null'
+    ),
+    'access arguments' => array (
+      'access own bkthn content'
+    ),
+    'type' => MENU_LOCAL_TASK | MENU_DEFAULT_LOCAL_TASK,
+
+  );
+
+  $items['bkthn/pledges'] = array (
+    'title' => t('Pledges'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_pledges_form',
+      'main',
+      'null'
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 30
+  );
+  $items['bkthn/pledges/add'] = array (
+    'title' => t(' Add Pledge'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_pledges_form',
+      'add',
+      'null'
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+  $items['bkthn/pledges/edit/%'] = array (
+    'title' => t('Edit Pledge'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_pledges_form',
+      'edit',
+      3
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+  $items['bkthn/pledges/delete/%'] = array (
+    'title' => t('Delete Pledge'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_pledges_form',
+      'delete',
+      3
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+
+  $items['bkthn/sponsors'] = array (
+    'title' => t('Sponsors'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_sponsors_form',
+      'main',
+      'null'
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 40
+  );
+  $items['bkthn/sponsorship/add'] = array (
+    'title' => t(' Add Sponsorship'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_sponsors_form',
+      'add',
+      'null'
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+  $items['bkthn/sponsorship/edit/%'] = array (
+    'title' => t('Edit Sponsorship'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_sponsors_form',
+      'edit',
+      3
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+  $items['bkthn/sponsorship/delete/%'] = array (
+    'title' => t('Delete Sponsorship'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_sponsors_form',
+      'delete',
+      3
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+
+  $items['bkthn/logs'] = array (
+    'title' => t('Ride Logs'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_logs_form',
+      'main',
+      '',
+      ''
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1
+  );
+  $items['bkthn/logs/%'] = array (
+    'title' => t('Ride Logs'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_logs_form',
+      'main',
+      2,
+      ''
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+  $items['bkthn/logs/%/add'] = array (
+    'title' => t(' Add Log Entry'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_logs_form',
+      'add',
+      2,
+      ''
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+  $items['bkthn/logs/%/edit/%'] = array (
+    'title' => t(' Log Entry Edit'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_logs_form',
+      'edit',
+      2,
+      4
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+  $items['bkthn/logs/%/delete/%'] = array (
+    'title' => t(' Log Entry Delete'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_logs_form',
+      'delete',
+      2,
+      4
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+
+  $items['bkthn/bikes'] = array (
+    'title' => t('Bikes'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_bikes_form',
+      'main',
+      3
+    ),
+    'access arguments' => array (
+      'access own bkthn content'
+    ),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10
+  );
+  $items['bkthn/bikes/add'] = array (
+    'title' => t('Add Bike'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_bikes_form',
+      'add',
+      3
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+  $items['bkthn/bikes/edit/%'] = array (
+    'title' => t(' Edit Vehicle'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_bikes_form',
+      'edit',
+      3
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+  $items['bkthn/bikes/delete/%'] = array (
+    'title' => t(' Delete Vehicle'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array (
+      'bkthn_bikes_form',
+      'delete',
+      3
+    ),
+    'access arguments' => array (
+      'edit own bkthn content'
+    ),
+    'type' => MENU_CALLBACK,
+
+  );
+
+  return $items;
+}
+?>

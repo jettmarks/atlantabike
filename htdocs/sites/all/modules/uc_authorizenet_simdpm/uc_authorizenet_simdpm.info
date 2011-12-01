@@ -1,0 +1,22 @@
+name = "Authorize.net SIM/DPM"
+description = Process payments using Authorize.net. Supports SIM and DPM.
+dependencies[] = uc_order
+dependencies[] = uc_payment
+dependencies[] = uc_credit
+package = Ubercart - payment
+core = 6.x
+php = 5.0
+
+; Information added by drupal.org packaging script on 2011-04-25
+version = "6.x-1.0-rc1"
+core = "6.x"
+project = "uc_authorizenet_simdpm"
+datestamp = "1303714016"
+
+
+; Information added by drupal.org packaging script on 2011-06-09
+version = "6.x-1.0"
+core = "6.x"
+project = "uc_authorizenet_simdpm"
+datestamp = "1307654519"
+

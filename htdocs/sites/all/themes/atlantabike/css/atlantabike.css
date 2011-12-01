@@ -1,0 +1,33 @@
+/* Page and Body elements */
+body { background: none repeat scroll 0 0 #CDC9C6; }
+#page { background-color: #F4F2F2; margin: 0 auto; max-width: 1290px; width: 100%; }
+
+/* Header */
+#header-group-wrapper { 
+/*gradient*/
+background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.21, #002649),
+    color-stop(0.51, #5E768C),
+    color-stop(0.84, #002649)
+);
+background-image: -moz-linear-gradient(
+    center bottom,
+    #002649 21%,
+    #5E768C 51%,
+    #002649 84%
+);
+padding-left: 15px; padding-left: 0; }
+#header-group { border-bottom: 35px solid #002649; height: 265px; }
+div#header-link-temp { position: absolute; height: 250px; text-align: center; margin: auto; width: 1260px; }
+
+/* Blocks */
+#primary-menu.block .inner { bottom: -300px; position: absolute; right: 10px; }
+.preface-top-wrapper { min-height: 2px; padding-top: 0; }
+#main-wrapper { background: url("../images/content-gradient.png") repeat-x scroll 0 1px transparent; padding-top: 1%; }
+.block .inner-inner { background-image: -webkit-gradient( linear, left bottom, left top, color-stop(0, rgb(250,250,250)), color-stop(0.19, rgb(227,224,227)), color-stop(0.9, rgb(255,255,255)) ); background-image: -moz-linear-gradient( center bottom, rgb(255,255,255) 0%, rgb(227,224,227) 19%, rgb(250,250,250) 90% ); border-radius: 5px; border: 1px solid #A5A5A5; padding: 3%; }
+.block .inner-inner img { max-width: 99%; }
+h2.block-title { background-color: #033166; border-radius: 5px; color: #E5E5E5; font-size: 1.5em; margin: -1.5% -1% 4%; padding: 2%; }
+#sidebar-last .block .inner-inner h2.block-title { background-color: #004512; }

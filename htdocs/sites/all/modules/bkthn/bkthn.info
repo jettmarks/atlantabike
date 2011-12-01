@@ -1,0 +1,8 @@
+name = "Bike Commute-a-Thon"
+description = "Module for recording Pledges and Cycling Logs for bicycle commuters."
+
+version = "0.1-SNAPSHOT"
+core = "6.x"
+project = "bkthn"
+datestamp = "201001231149"
+
